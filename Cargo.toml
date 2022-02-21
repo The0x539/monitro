@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+tray-item = "0.6.0"
 
 [dependencies.windows]
 version = "0.32.0"
@@ -14,4 +15,8 @@ features = [
     "Win32_UI_Shell",
     "Win32_System_Com",
     "Win32_System_Ole",
+    "Win32_UI_WindowsAndMessaging"
 ]
+
+[build-dependencies]
+windres = "0.2.2"
