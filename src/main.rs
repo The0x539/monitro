@@ -61,6 +61,8 @@ fn toggle_focus_mode() {
 }
 
 fn sleep_displays() {
+    std::thread::sleep(std::time::Duration::from_secs(3));
+    
     let hwnd = HWND(0xFFFF);
     let msg = WM_SYSCOMMAND;
     let wp = WPARAM(SC_MONITORPOWER as usize);
