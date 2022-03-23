@@ -132,28 +132,28 @@ impl Sdc<'_> {
         flags
     }
 
-    fn paths(&self) -> (u32, *const DISPLAYCONFIG_PATH_INFO) {
-        match self.config {
-            SdcConfig::SuppliedConfig { paths, .. } | SdcConfig::SuppliedTopology { paths, .. } => {
-                (paths.len() as u32, paths.as_ptr())
-            }
-            _ => (0, std::ptr::null()),
+    fn paths(&self) -> &[DISPLAYCONFIG_PATH_INFO] {
+        if let SdcConfig::SuppliedConfig { paths, .. } | SdcConfig::SuppliedTopology { paths, .. } =
+            self.config
+        {
+            paths
+        } else {
+            &[]
         }
     }
 
-    fn modes(&self) -> (u32, *const DISPLAYCONFIG_MODE_INFO) {
-        match self.config {
-            SdcConfig::SuppliedConfig { modes, .. } => (modes.len() as u32, modes.as_ptr()),
-            _ => (0, std::ptr::null()),
+    fn modes(&self) -> &[DISPLAYCONFIG_MODE_INFO] {
+        if let SdcConfig::SuppliedConfig { modes, .. } = self.config {
+            modes
+        } else {
+            &[]
         }
     }
 }
 
 pub fn set_display_config(sdc: Sdc) -> WinResult<()> {
-    let (num_paths, paths) = sdc.paths();
-    let (num_modes, modes) = sdc.modes();
     unsafe {
-        let ret = SetDisplayConfig(num_paths, paths, num_modes, modes, sdc.flags());
+        let ret = SetDisplayConfig(sdc.paths(), sdc.modes(), sdc.flags());
         win_result(ret)
     }
 }
