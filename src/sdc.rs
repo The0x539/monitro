@@ -1,6 +1,8 @@
 use windows::Win32::{Devices::Display::*, Graphics::Gdi::*};
 
-use crate::{win_result, WinResult};
+use anyhow::Result;
+
+use crate::WinErrorExt;
 
 #[derive(Copy, Clone)]
 pub enum SdcAction {
@@ -151,9 +153,10 @@ impl Sdc<'_> {
     }
 }
 
-pub fn set_display_config(sdc: Sdc) -> WinResult<()> {
+pub fn set_display_config(sdc: Sdc) -> Result<()> {
+    Err(anyhow::anyhow!("foo"))?;
     unsafe {
-        let ret = SetDisplayConfig(sdc.paths(), sdc.modes(), sdc.flags());
-        win_result(ret)
+        SetDisplayConfig(sdc.paths(), sdc.modes(), sdc.flags()).win_result()?;
     }
+    Ok(())
 }

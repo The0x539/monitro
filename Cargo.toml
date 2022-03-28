@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+anyhow = "1.0.56"
 tray-item = "0.6.0"
 
 [dependencies.windows]
@@ -20,3 +21,5 @@ features = [
 
 [build-dependencies]
 windres = "0.2.2"
+
+[features]

@@ -2,15 +2,17 @@ use windows::core::Interface;
 use windows::Win32::System::{Com::*, Ole::*};
 use windows::Win32::UI::Shell::*;
 
-pub fn hide() -> windows::core::Result<()> {
+use anyhow::Result;
+
+pub fn hide() -> Result<()> {
     unsafe { pain(FWF_NOICONS.0 as u32) }
 }
 
-pub fn unhide() -> windows::core::Result<()> {
+pub fn unhide() -> Result<()> {
     unsafe { pain(0) }
 }
 
-unsafe fn pain(flags: u32) -> windows::core::Result<()> {
+unsafe fn pain(flags: u32) -> Result<()> {
     CoInitialize(std::ptr::null())?;
 
     let sp_shell_windows: IShellWindows = CoCreateInstance(&ShellWindows, None, CLSCTX_ALL)?;
