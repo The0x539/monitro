@@ -7,6 +7,7 @@ use std::process::exit;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::Duration;
 
+use windows::Win32::Devices::Display::*;
 use windows::Win32::Foundation::*;
 use windows::Win32::UI::WindowsAndMessaging::*;
 
@@ -47,21 +48,24 @@ fn sdc_config(focus_mode: bool) -> sdc::Sdc<'static> {
     }
 }
 
+static FOCUS_MODE_ACTIVE: AtomicBool = AtomicBool::new(false);
+
 fn enter_focus_mode() -> Result<()> {
+    FOCUS_MODE_ACTIVE.store(true, Ordering::Relaxed);
     icons::hide()?;
     sdc::set_display_config(sdc_config(true))?;
     Ok(())
 }
 
 fn exit_focus_mode() -> Result<()> {
+    FOCUS_MODE_ACTIVE.store(false, Ordering::Relaxed);
     sdc::set_display_config(sdc_config(false))?;
     icons::unhide()?;
     Ok(())
 }
 
 fn toggle_focus_mode() -> Result<()> {
-    static ON: AtomicBool = AtomicBool::new(false);
-    if ON.fetch_xor(true, Ordering::Relaxed) {
+    if FOCUS_MODE_ACTIVE.load(Ordering::Relaxed) {
         exit_focus_mode()?;
     } else {
         enter_focus_mode()?;
@@ -106,6 +110,15 @@ fn setup_tray() -> Result<TrayItem, TIError> {
 
 fn setup() -> Result<()> {
     std::env::set_var("RUST_BACKTRACE", "1");
+
+    let (topo_id, _, _) = qdc::database_current()?;
+    if topo_id == DISPLAYCONFIG_TOPOLOGY_EXTERNAL {
+        icons::hide()?;
+        FOCUS_MODE_ACTIVE.store(true, Ordering::Relaxed);
+    } else {
+        icons::unhide()?;
+    }
+
     let tray = setup_tray().map_err(|e| anyhow!("Error setting up tray: {e}"));
     std::mem::forget(tray);
     Ok(())
