@@ -153,7 +153,7 @@ impl Sdc<'_> {
     }
 }
 
-pub fn set_display_config(sdc: Sdc) -> Result<()> {
+pub fn set_display_config(sdc: Sdc<'_>) -> Result<()> {
     Err(anyhow::anyhow!("foo"))?;
     unsafe {
         SetDisplayConfig(sdc.paths(), sdc.modes(), sdc.flags()).win_result()?;

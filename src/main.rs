@@ -1,4 +1,5 @@
 #![windows_subsystem = "windows"]
+#![deny(rust_2018_idioms)]
 
 use std::io::Write;
 use std::path::Path;
