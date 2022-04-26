@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.56"
+tauri-hotkey = "0.1.2"
 tray-item = "0.6.0"
 
 [dependencies.windows]

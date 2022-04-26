@@ -75,6 +75,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "cc"
+version = "1.0.73"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2fff2a6927b3bb87f9595d67196a70493f627687a71d87a0d692242c33f58c11"
+
+[[package]]
 name = "cfg-expr"
 version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -478,6 +484,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "lazy_static"
+version = "1.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
+
+[[package]]
 name = "libappindicator"
 version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -538,6 +550,7 @@ name = "monitro"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "tauri-hotkey",
  "tray-item",
  "windows",
  "windres",
@@ -720,6 +733,9 @@ name = "serde"
 version = "1.0.136"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ce31e24b01e1e524df96f1c2fdd054405f8d7376249a5110886fb4b658484789"
+dependencies = [
+ "serde_derive",
+]
 
 [[package]]
 name = "serde_derive"
@@ -746,9 +762,27 @@ checksum = "f2dd574626839106c320a323308629dcb1acfc96e32a8cba364ddc61ac23ee83"
 
 [[package]]
 name = "strum"
+version = "0.20.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7318c509b5ba57f18533982607f24070a55d353e90d4cae30c467cdb2ad5ac5c"
+
+[[package]]
+name = "strum"
 version = "0.21.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "aaf86bbcfd1fa9670b7a129f64fc0c9fcbbfe4f1bc4210e9e98fe71ffc12cde2"
+
+[[package]]
+name = "strum_macros"
+version = "0.20.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ee8bc6b87a5112aeeab1f4a9f7ab634fe6cbefc4850006df31267f4cfb9e3149"
+dependencies = [
+ "heck",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
 
 [[package]]
 name = "strum_macros"
@@ -784,11 +818,38 @@ dependencies = [
  "heck",
  "itertools",
  "pkg-config",
- "strum",
- "strum_macros",
+ "strum 0.21.0",
+ "strum_macros 0.21.1",
  "thiserror",
  "toml",
  "version-compare",
+]
+
+[[package]]
+name = "tauri-hotkey"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0c6cf71018e75b7c88f0c9643329891668c32cb377a1cccdd1f2973f51eff118"
+dependencies = [
+ "log",
+ "once_cell",
+ "serde",
+ "strum 0.20.0",
+ "strum_macros 0.20.1",
+ "tauri-hotkey-sys",
+ "thiserror",
+]
+
+[[package]]
+name = "tauri-hotkey-sys"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7024154106177cefd2592bcb0bb3df9dd3aea8a7e21f8fefb8d5b02fe115fed7"
+dependencies = [
+ "cc",
+ "thiserror",
+ "winapi",
+ "x11-dl",
 ]
 
 [[package]]
@@ -951,4 +1012,15 @@ checksum = "a27a759395c1195c4cc5cda607ef6f8f6498f64e78f7900f5de0a127a424704a"
 dependencies = [
  "serde",
  "winapi",
+]
+
+[[package]]
+name = "x11-dl"
+version = "2.19.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ea26926b4ce81a6f5d9d0f3a0bc401e5a37c6ae14a1bfaa8ff6099ca80038c59"
+dependencies = [
+ "lazy_static",
+ "libc",
+ "pkg-config",
 ]

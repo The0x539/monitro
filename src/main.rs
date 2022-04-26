@@ -11,7 +11,8 @@ use windows::Win32::Devices::Display::*;
 use windows::Win32::Foundation::*;
 use windows::Win32::UI::WindowsAndMessaging::*;
 
-use anyhow::{anyhow, Result};
+use anyhow::{anyhow, Context, Result};
+use tauri_hotkey::{Hotkey, HotkeyManager, Key, Modifier};
 use tray_item::{TIError, TrayItem};
 
 trait WinErrorExt {
@@ -73,8 +74,8 @@ fn toggle_focus_mode() -> Result<()> {
     Ok(())
 }
 
-fn sleep_displays() -> Result<()> {
-    std::thread::sleep(std::time::Duration::from_secs(3));
+fn sleep_displays(secs: u64) -> Result<()> {
+    std::thread::sleep(std::time::Duration::from_secs(secs));
 
     let hwnd = HWND(0xFFFF);
     let msg = WM_SYSCOMMAND;
@@ -103,9 +104,23 @@ fn wrap(f: fn() -> Result<()>) -> impl Fn() + Send + Sync + 'static {
 fn setup_tray() -> Result<TrayItem, TIError> {
     let mut tray = TrayItem::new("monitro", "tray-icon")?;
     tray.add_menu_item("Toggle focus mode", wrap(toggle_focus_mode))?;
-    tray.add_menu_item("Sleep displays", wrap(sleep_displays))?;
+    tray.add_menu_item("Sleep displays", wrap(|| sleep_displays(3)))?;
     tray.add_menu_item("Quit", || exit(0))?;
     Ok(tray)
+}
+
+fn setup_hotkeys() -> Result<HotkeyManager, tauri_hotkey::Error> {
+    let mut manager = HotkeyManager::new();
+
+    let hyper = |key| Hotkey {
+        modifiers: vec![Modifier::CTRL, Modifier::SUPER, Modifier::ALT],
+        keys: vec![key],
+    };
+
+    manager.register(hyper(Key::F), wrap(toggle_focus_mode))?;
+    manager.register(hyper(Key::M), wrap(|| sleep_displays(0)))?;
+
+    Ok(manager)
 }
 
 fn setup() -> Result<()> {
@@ -121,6 +136,10 @@ fn setup() -> Result<()> {
 
     let tray = setup_tray().map_err(|e| anyhow!("Error setting up tray: {e}"));
     std::mem::forget(tray);
+
+    let hotkeys = setup_hotkeys().context("Error setting up hotkeys")?;
+    std::mem::forget(hotkeys);
+
     Ok(())
 }
 
