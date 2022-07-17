@@ -31,10 +31,10 @@ pub mod sdc;
 
 fn sdc_config(focus_mode: bool) -> sdc::Sdc<'static> {
     let topologies = sdc::SdcDatabaseTopologies {
-        internal: false,
+        internal: focus_mode,
         clone: false,
         extend: !focus_mode,
-        external: focus_mode,
+        external: false,
     };
 
     sdc::Sdc {
@@ -127,7 +127,7 @@ fn setup() -> Result<()> {
     std::env::set_var("RUST_BACKTRACE", "1");
 
     let (topo_id, _, _) = qdc::database_current()?;
-    if topo_id == DISPLAYCONFIG_TOPOLOGY_EXTERNAL {
+    if topo_id == DISPLAYCONFIG_TOPOLOGY_INTERNAL {
         icons::hide()?;
         FOCUS_MODE_ACTIVE.store(true, Ordering::Relaxed);
     } else {
